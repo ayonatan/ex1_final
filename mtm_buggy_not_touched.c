@@ -8,8 +8,6 @@
 
 
 int main() {
-
-        printf("yonatan's printf \n");
   
     return 0;
 }
