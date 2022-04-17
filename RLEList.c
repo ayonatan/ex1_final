@@ -1,6 +1,5 @@
 #include "RLEList.h"
 
-// tell me what do you think about the implementation of the RLELIst struct
 typedef struct RLEList_t {
     char ch;
     int appear;
@@ -15,40 +14,41 @@ void RLEListDestroy(RLEList list) {
     free(list);
 }
 
-int RLEListSize(RLEList list) {
-    int num = 0;
-    if (list == NULL)
-        return -1;
-    while (list) {
-        list = list->next;
-        num++;
-    }
-    return num;
-}
 
 char RLEListGet(RLEList list, int index, RLEListResult *result) {
-    if (list == NULL)
+    if (list == NULL) {
         *result = RLE_LIST_NULL_ARGUMENT;
-    return '/0';
-    while (list != NULL && index != 0) {
-        int appear = list->appear;
-        while (appear > 0 && list != NULL && index > 0) {
-            index--;
-            appear--;
-        }
-        if (list == NULL) {
-            *result = RLE_LIST_INDEX_OUT_OF_BOUNDS;
-            return 0;
-        }
-        if (index == 0) {
+        return '/0';
+    }
+    if (index < 0) {
+        *result = RLE_LIST_INDEX_OUT_OF_BOUNDS;
+        return '/0';
+    }
+    while (list) { // list!=NULL
+        if (index < list->appear) {
             *result = RLE_LIST_SUCCESS;
             return list->ch;
         }
         list = list->next;
     }
+    *result = RLE_LIST_INDEX_OUT_OF_BOUNDS;
+    return '/0';
 }
-// michal keep changing the file and implement the funcs
-// good lack and HAPPY PASSOVER !!!!
 
 
+char *RLEListExportToString(RLEList list, RLEListResult *result) {
+    if (!list) { // list == NULL
+        result * = RLE_LIST_NULL_ARGUMENT;
+        return NULL;
+    }
+    char *tos = "";
+    while (list) { // list!=NULL
+        tos += list->ch;
+        tos += list->appear;
+        tos += "\n";
+        list = list->next;
+    }
+    result *= RLE_LIST_SUCCESS;
+    return tos;
+}
 
