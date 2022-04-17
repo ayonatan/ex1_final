@@ -28,20 +28,25 @@ int RLEListSize(RLEList list) {
 
 char RLEListGet(RLEList list, int index, RLEListResult *result) {
     if (list == NULL)
-        result * = RLE_LIST_NULL_ARGUMENT;
+        *result = RLE_LIST_NULL_ARGUMENT;
     return '/0';
-    while (list || index == 0) {
-        index--;
+    while (list != NULL && index != 0) {
+        int appear = list->appear;
+        while (appear > 0 && list != NULL && index > 0) {
+            index--;
+            appear--;
+        }
+        if (list == NULL) {
+            *result = RLE_LIST_INDEX_OUT_OF_BOUNDS;
+            return 0;
+        }
+        if (index == 0) {
+            *result = RLE_LIST_SUCCESS;
+            return list->ch;
+        }
         list = list->next;
     }
-    if (list == NULL)
-        result * = RLE_LIST_INDEX_OUT_OF_BOUNDS;
-    return 0;
-    result *= RLE_LIST_SUCCESS;
-    return list->ch;
 }
-
-
 // michal keep changing the file and implement the funcs
 // good lack and HAPPY PASSOVER !!!!
 
