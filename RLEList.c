@@ -1,11 +1,11 @@
 #include "RLEList.h"
 #include "stdlib.h"
 // tell me what do you think about the implementation of the RLELIst struct
-typedef struct RLEList_t {
+struct RLEList_t {
     char char_value;
     int appears;
     struct RLEList_t *next;
-} *RLEList;
+};
 
 RLEList RLEListCreate(){
     RLEList list = malloc(sizeof(RLEList));
