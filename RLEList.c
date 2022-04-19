@@ -75,13 +75,13 @@ char RLEListGet(RLEList list, int index, RLEListResult *result) {
     if (!list)
     {
         *result = RLE_LIST_NULL_ARGUMENT;
-        return '/0';
+        return '\0';
     }
     int size = RLEListSize(list);
     if (index < 0 || index > size - 1)
     {
         *result = RLE_LIST_INDEX_OUT_OF_BOUNDS;
-        return '/0';
+        return '\0';
     }
     while (list)
     {
@@ -94,7 +94,7 @@ char RLEListGet(RLEList list, int index, RLEListResult *result) {
         list = list->next;
     }
     *result = RLE_LIST_INDEX_OUT_OF_BOUNDS;
-    return '/0';
+    return '\0';
 }
 
 RLEListResult RLEListMap(RLEList list, MapFunction map_function){
