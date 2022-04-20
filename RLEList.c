@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #define ZERO '\0'
+#define INDEX_ILLEGAL -1
+
 
 struct RLEList_t {
     char char_value;
@@ -172,4 +174,33 @@ char *RLEListExportToString(RLEList list, RLEListResult *result) {
     if (!result)
         *result = RLE_LIST_SUCCESS;
     return list_to_string;
+}
+
+int RLEListRepetitions(RLEList list, int index, RLEListResult result){
+    if (!list)
+    {
+        *result = RLE_LIST_NULL_ARGUMENT;
+        return INDEX_ILLEGAL;
+    }
+    int size = RLEListSize(list);
+    if (index < 0 || index > size - 1)
+    {
+        if (!result)
+            *result = RLE_LIST_INDEX_OUT_OF_BOUNDS;
+        return INDEX_ILLEGAL;
+    }
+    RLEList temp_list = list->next;
+    while (temp_list)
+    {
+        if (index < temp_list->repetitions)
+        {
+            if (!result)
+                *result = RLE_LIST_SUCCESS;
+            return temp_list->repetitions;
+        }
+        index -= temp_list->repetitions;
+        temp_list = temp_list->next;
+    }
+    *result = RLE_LIST_INDEX_OUT_OF_BOUNDS;
+    return INDEX_ILLEGAL;
 }
