@@ -1,13 +1,13 @@
 //
-// Created by Assaf on 07/03/2022.
+// Created by yonat on 15/04/2022.
 //
 
-#ifndef HW1_RLELIST_H
-#define HW1_RLELIST_H
+#ifndef MTM_HW1_RLELIST_H
+#define MTM_HW1_RLELIST_H
 
 #include <stdio.h>
 #include <stdbool.h>
-
+#include <stdlib.h>
 /**
 * Run Length Encoding List
 *
@@ -22,10 +22,13 @@
 *   RLEListGet              - Returns the character found at a given index.
 *   RLEListExportToString   - Returns a string of all the characters in the RLE list.
 *   RLEListMap              - Transforms the list by applying a given function to each character in the list.
+*   RLEListRepetitions       - Returns the repetitions of the character at the given index. 
+ *   the 
+ *   list.
 */
 
 
-/** 
+/**
 * Typedef for defining the RLE list.
 * Complete the implementation of struct RLEList_t defined in RLEList.c
 */
@@ -41,7 +44,7 @@ typedef enum {
 } RLEListResult;
 
 
-/** 
+/**
  * Type of function for mapping characters.
  * This function should accept a character in the list and return the mapped character
  */
@@ -116,7 +119,7 @@ RLEListResult RLEListRemove(RLEList list, int index);
 * 	LIST_SUCCESS the character found at index has been retrieved successfully.
 * @return
 * 	0 if result is not RLE_LIST_SUCCESS.
-* 	The character found at given index in case of success.   
+* 	The character found at given index in case of success.
 */
 char RLEListGet(RLEList list, int index, RLEListResult *result);
 
@@ -140,7 +143,7 @@ char* RLEListExportToString(RLEList list, RLEListResult* result);
 *               This function replaces each character of the give RLE list with its mapped character.
 *
 * @param list - The RLE list to edit.
-* @param MapFunction - Pointer to a function of type MapFunction. 
+* @param MapFunction - Pointer to a function of type MapFunction.
 * @return
 * 	RLE_LIST_NULL_ARGUMENT if a NULL was sent as a paramater.
 * 	LIST_SUCCESS if the mapping is done successfully.
@@ -148,4 +151,19 @@ char* RLEListExportToString(RLEList list, RLEListResult* result);
 RLEListResult RLEListMap(RLEList list, MapFunction map_function);
 
 
-#endif // HW1_RLELIST_H
+/**
+*   RLEListRepetitions: Returns the repetitions of the char at the chosen index.
+* @param list - The RLE list.
+* @param index - the wanted place int the RLEList.
+* @param result - Pointer to be used to store the result of the operation, if it is NULL, the result will not be saved.
+* 	RLE_LIST_NULL_ARGUMENT if a NULL was sent to the function as list.
+*   RLE_LIST_INDEX_OUT_OF_BOUNDS if the index is smaller than 0 or bigger than list size.
+* 	LIST_SUCCESS the repetitions has been successfuly returned.
+* @return
+* 	-1 if result is not LIST_SUCCESS
+*   if result is LIST_SUCCESS, return the repetitions of the character at given index.
+*/
+int RLEListRepetitions(RLEList list, int index, RLEListResult result);
+
+
+#endif //MTM_HW1_RLELIST_H
