@@ -1,10 +1,12 @@
 #include "RLEList.h"
-#include "stdlib.h"
-// tell me what do you think about the implementation of the RLELIst struct
+#include <stdlib.h>
+#include <string.h>
+#define ZERO '\0'
+
 struct RLEList_t {
     char char_value;
-    int appears;
-    struct RLEList_t *next;
+    int repetitions;
+    struct RLEList_t* next;
 };
 
 RLEList RLEListCreate(){
@@ -22,33 +24,33 @@ void RLEListDestroy(RLEList list) {
 }
 
 RLEListResult RLEListAppend(RLEList list, char value){
-    RLEList tempList = list;
     if (!list)
         return RLE_LIST_NULL_ARGUMENT;
-    while (tempList->next)
-        tempList = tempList->next;
-    if(value == tempList->char_value)
+    RLEList temp_list = list;
+    while (temp_list->next)
+        temp_list = temp_list->next;
+    if (value == temp_list->char_value)
     {
-        tempList->appears++;
+        temp_list->repetitions++;
         return RLE_LIST_SUCCESS;
     }
-    tempList->next = malloc(sizeof(RLEList));
-    if (!tempList->next)
+    temp_list->next = malloc(sizeof(RLEList));
+    if (!temp_list->next)
         return RLE_LIST_OUT_OF_MEMORY;
-    tempList = tempList->next;
-    tempList->appears = 1;
-    tempList->char_value = value;
+    temp_list = temp_list->next;
+    temp_list->repetitions = 1;
+    temp_list->char_value = value;
     return RLE_LIST_SUCCESS;
 }
 
 int RLEListSize(RLEList list) {
     int size = 0;
-    RLEList tempList=list;
+    RLEList temp_list = list->next;
     if (!list)
         return -1;
-    while (tempList) {
-        size += tempList->appears;
-        tempList = tempList->next;
+    while (temp_list) {
+        size += temp_list->repetitions;
+        temp_list = temp_list->next;
     }
     return size;
 }
@@ -59,79 +61,115 @@ RLEListResult RLEListRemove(RLEList list, int index){
     int size = RLEListSize(list);
     if (index < 0 || index > size - 1)
         return RLE_LIST_INDEX_OUT_OF_BOUNDS;
-    RLEList tempList = list;
-    while (tempList)
+    RLEList temp_list = list->next;
+    while (temp_list)
     {
-        if (index<tempList->appears)
+        if (index < temp_list->repetitions)
         {
-            tempList->appears--;
+            if (temp_list->repetitions > 1)
+            {
+                temp_list->repetitions--;
+                return RLE_LIST_SUCCESS;
+            }
+            RLEList temp_list2 = list;
+            while(temp_list2->next != temp_list)
+                temp_list2 = temp_list2->next;
+            temp_list2->next = temp_list->next;
+            temp_list->next = NULL;
+            free(temp_list);
             return RLE_LIST_SUCCESS;
         }
-        index -= tempList->appears;
+        index -= temp_list->repetitions;
+        temp_list = temp_list->next;
     }
+    return RLE_LIST_ERROR;
 }
 
 char RLEListGet(RLEList list, int index, RLEListResult *result) {
     if (!list)
     {
         *result = RLE_LIST_NULL_ARGUMENT;
-        return '\0';
+        return ZERO;
     }
     int size = RLEListSize(list);
     if (index < 0 || index > size - 1)
     {
-        *result = RLE_LIST_INDEX_OUT_OF_BOUNDS;
-        return '\0';
+        if (!result)
+            *result = RLE_LIST_INDEX_OUT_OF_BOUNDS;
+        return ZERO;
     }
-    while (list)
+    RLEList temp_list = list->next;
+    while (temp_list)
     {
-        if (index < list->appears)
+        if (index < temp_list->repetitions)
         {
-            *result = RLE_LIST_SUCCESS;
-            return list->char_value;
+            if (!result)
+                *result = RLE_LIST_SUCCESS;
+            return temp_list->char_value;
         }
-        index -= list->appears;
-        list = list->next;
+        index -= temp_list->repetitions;
+        temp_list = temp_list->next;
     }
     *result = RLE_LIST_INDEX_OUT_OF_BOUNDS;
-    return '\0';
+    return ZERO;
 }
 
 RLEListResult RLEListMap(RLEList list, MapFunction map_function){
     if (!list)
         return RLE_LIST_NULL_ARGUMENT;
-    RLEList tempList = list;
-    while (tempList)
+    RLEList temp_list = list->next;
+    while (temp_list)
     {
-        tempList->char_value = map_function(tempList->char_value);
-        tempList=tempList->next;
+        temp_list->char_value = map_function(temp_list->char_value);
+        temp_list = temp_list->next;
     }
     return RLE_LIST_SUCCESS;
+}
+
+int numOfDigits(int num){
+    int counter=0;
+    while(num!=0)
+    {
+        counter++;
+        num/=10;
+    }
+    return counter;
 }
 
 char *RLEListExportToString(RLEList list, RLEListResult *result) {
     if (!list)
     {
-        *result = RLE_LIST_NULL_ARGUMENT;
+        if (!result)
+            *result = RLE_LIST_NULL_ARGUMENT;
         return NULL;
     }
-    int sizeString = 0;
-    RLEList tempList = list;
-    while(tempList)
+    int size_string = 0;
+    RLEList temp_list = list->next;
+    while(temp_list)
     {
-        sizeString++;
-        tempList = tempList->next;
+        size_string += 2;//for one char and one \n
+        size_string += numOfDigits(temp_list->repetitions);
+        temp_list = temp_list->next;
     }
-    sizeString *= 3;
-    char *tostring = malloc(sizeString);
-    for(int i = 0; i < sizeString - 1 ; i+=3)
+    temp_list = list->next;
+    char *list_to_string = malloc(size_string + 1);
+    list_to_string[size_string] = '\0';
+    if (!list_to_string)
     {
-        tostring[i] = list->char_value;
-        tostring[i + 1] = list->appears;
-        tostring[i + 2] = '\n';
-        list = list->next;
+        if (!result)
+            *result = RLE_LIST_ERROR;
+        return NULL;
     }
-    tostring[sizeString-1] = '\0';
-    *result = RLE_LIST_SUCCESS;
-    return tostring;
+    int num_of_digits;
+    for(int i = 0; i < size_string - 2; i += (2 + num_of_digits))
+    {
+        num_of_digits = numOfDigits(temp_list->repetitions);
+        list_to_string[i] = temp_list->char_value;
+        sprintf((list_to_string + i + 1), "%d", temp_list->repetitions);
+        list_to_string[i + 1 + num_of_digits] = '\n';
+        temp_list = temp_list->next;
+    }
+    if (!result)
+        *result = RLE_LIST_SUCCESS;
+    return list_to_string;
 }
