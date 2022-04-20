@@ -1,17 +1,21 @@
 #include <stdio.h>
 #include "RLEList.h"
-
+#include <string.h>
 
 int main() {
+    RLEListResult result;
     RLEList head= RLEListCreate();
     char input;
-    while (scanf("%c",&input) && input!='0') {
-        RLEListAppend(head,input);
+    printf("enter input:\n");
+    while (scanf("\n%c",&input) && input!='0') {
+        result=RLEListAppend(head,input);
     }
-    RLEListResult result;
-    printf("%c!\n", RLEListGet(head,3,&result));
+    putchar(RLEListGet(head,0,&result));
+    RLEListRemove(head,0);
+    putchar('\n');
+    printf("the size is: %d\n",RLEListSize(head));
     char* tos =RLEListExportToString(head,&result);
     printf("%s",tos);
-    destroyList(head);
+    RLEListDestroy(head);
     return 0;
 }
