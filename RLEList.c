@@ -176,7 +176,7 @@ char *RLEListExportToString(RLEList list, RLEListResult *result) {
     return list_to_string;
 }
 
-int RLEListRepetitions(RLEList list, int index, RLEListResult result){
+int RLEListRepetitions(RLEList list, int index, RLEListResult *result){
     if (!list)
     {
         *result = RLE_LIST_NULL_ARGUMENT;
