@@ -163,7 +163,7 @@ RLEListResult RLEListMap(RLEList list, MapFunction map_function);
 * 	-1 if result is not LIST_SUCCESS
 *   if result is LIST_SUCCESS, return the repetitions of the character at given index.
 */
-int RLEListRepetitions(RLEList list, int index, RLEListResult result);
+int RLEListRepetitions(RLEList list, int index, RLEListResult *result);
 
 
 #endif //MTM_HW1_RLELIST_H
