@@ -2,8 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #define ZERO '\0'
-#define INDEX_ILLEGAL -1
-
 
 struct RLEList_t {
     char char_value;
@@ -57,6 +55,17 @@ int RLEListSize(RLEList list) {
     return size;
 }
 
+//merge the next node into node.
+//assumptions checked by the calling functions: the next node exists and it has the same char value
+void merge(RLEList node)
+{
+    RLEList node_next = node->next;
+    node->repetitions += node_next->repetitions;
+    node->next = node_next->next;
+    node_next->next = NULL;
+    free(node_next);
+}
+
 RLEListResult RLEListRemove(RLEList list, int index){
     if (!list)
         return RLE_LIST_NULL_ARGUMENT;
@@ -79,6 +88,8 @@ RLEListResult RLEListRemove(RLEList list, int index){
             temp_list2->next = temp_list->next;
             temp_list->next = NULL;
             free(temp_list);
+            if (temp_list2->next && temp_list2->char_value == temp_list2->next->char_value)
+                merge(temp_list2);
             return RLE_LIST_SUCCESS;
         }
         index -= temp_list->repetitions;
@@ -124,6 +135,14 @@ RLEListResult RLEListMap(RLEList list, MapFunction map_function){
     {
         temp_list->char_value = map_function(temp_list->char_value);
         temp_list = temp_list->next;
+    }
+    temp_list = list;
+    while (temp_list->next)
+    {
+        if (temp_list->next->char_value == temp_list->char_value)
+            merge(temp_list);
+        else
+            temp_list = temp_list->next;
     }
     return RLE_LIST_SUCCESS;
 }
@@ -174,33 +193,4 @@ char *RLEListExportToString(RLEList list, RLEListResult *result) {
     if (!result)
         *result = RLE_LIST_SUCCESS;
     return list_to_string;
-}
-
-int RLEListRepetitions(RLEList list, int index, RLEListResult *result){
-    if (!list)
-    {
-        *result = RLE_LIST_NULL_ARGUMENT;
-        return INDEX_ILLEGAL;
-    }
-    int size = RLEListSize(list);
-    if (index < 0 || index > size - 1)
-    {
-        if (!result)
-            *result = RLE_LIST_INDEX_OUT_OF_BOUNDS;
-        return INDEX_ILLEGAL;
-    }
-    RLEList temp_list = list->next;
-    while (temp_list)
-    {
-        if (index < temp_list->repetitions)
-        {
-            if (!result)
-                *result = RLE_LIST_SUCCESS;
-            return temp_list->repetitions;
-        }
-        index -= temp_list->repetitions;
-        temp_list = temp_list->next;
-    }
-    *result = RLE_LIST_INDEX_OUT_OF_BOUNDS;
-    return INDEX_ILLEGAL;
 }
