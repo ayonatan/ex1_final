@@ -1,4 +1,16 @@
-
+#include <stdio.h>
+#include "AsciiArtTool.h"
+#include <stdlib.h>
+RLEList asciiArtRead(FILE* in_stream){
+    RLEList compressed_file = RLEListCreate();
+    char input_char_value = fgetc(in_stream);
+    while (input_char_value)
+    {
+        RLEListAppend(compressed_file);
+        input_char_value = fgetc(in_stream);
+    }
+    return compressed_file;
+}
 RLEListResult asciiArtPrint(RLEList list, FILE *out_stream) {
     FILE *output = fopen(out_stream, "w");
     if (!output) {
@@ -20,7 +32,6 @@ RLEListResult asciiArtPrint(RLEList list, FILE *out_stream) {
     fclose(out_stream);
     return RLE_LIST_SUCCESS;
 }
-
 
 RLEListResult asciiArtPrintEncoded(RLEList list, FILE *out_stream) {
     if (!list || out_stream == NULL)
