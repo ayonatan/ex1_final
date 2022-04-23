@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #define ZERO '\0'
+#define ZERO_SPOT 1
+#define CHAR_AND_LINE_DROP 2
 
 struct RLEList_t {
     char char_value;
@@ -168,12 +170,12 @@ char *RLEListExportToString(RLEList list, RLEListResult *result) {
     RLEList temp_list = list->next;
     while(temp_list)
     {
-        size_string += 2;//for one char and one \n
+        size_string += CHAR_AND_LINE_DROP;//for one char and one \n
         size_string += numOfDigits(temp_list->repetitions);
         temp_list = temp_list->next;
     }
     temp_list = list->next;
-    char *list_to_string = malloc(size_string + 1);
+    char *list_to_string = malloc(size_string + ZERO_SPOT);
     list_to_string[size_string] = '\0';
     if (!list_to_string)
     {
@@ -182,7 +184,8 @@ char *RLEListExportToString(RLEList list, RLEListResult *result) {
         return NULL;
     }
     int num_of_digits;
-    for(int i = 0; i < size_string - 2; i += (2 + num_of_digits))
+    int last_char_index = size_string - 3;
+    for(int i = 0; i <= last_char_index; i += (2 + num_of_digits))
     {
         num_of_digits = numOfDigits(temp_list->repetitions);
         list_to_string[i] = temp_list->char_value;
