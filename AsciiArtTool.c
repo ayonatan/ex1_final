@@ -4,7 +4,7 @@
 RLEList asciiArtRead(FILE* in_stream){
     RLEList compressed_file = RLEListCreate();
     char input_char_value = fgetc(in_stream);
-    while (input_char_value)
+    while (input_char_value != EOF)
     {
         RLEListAppend(compressed_file, input_char_value);
         input_char_value = fgetc(in_stream);
