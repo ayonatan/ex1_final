@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <assert.h>
+#include <string.h>
+#define ZERO_CHAR '\0'
+char *stringDuplicator(char *stringToDuplicate, int timesToDuplicate);
+
+int main() {
+    char str[7] = {'R', 'e', 's', 'u', 'l', '_', '\0'};
+    printf("result: %s\n", stringDuplicator(str, 6));
+    printf("result: %s\n", NULL, 0);
+
+}
+
+char *stringDuplicator(char *stringToDuplicate, int timesToDuplicate) {
+    if (stringToDuplicate == NULL) {
+        assert(!stringToDuplicate);
+    }
+    assert(timesToDuplicate > 0);
+    int stringLength = strlen(stringToDuplicate);
+    int mallocSize = stringLength * timesToDuplicate * sizeof(char) + 1;
+    char *outputString = malloc(mallocSize);
+    if (outputString == NULL) {
+        return NULL;
+    }
+    assert(outputString);
+    for (int i = 0; i < timesToDuplicate; i++) {
+        strcpy(outputString+stringLength*i, stringToDuplicate);
+    }
+    outputString[mallocSize - 1] = ZERO_CHAR;
+    return outputString;
+}
