@@ -13,4 +13,4 @@ RLEList.o : RLEList.c RLEList.h
 fixBug.o : fixBug.c fixBug.h
 	$(CC) -c $(DEBUG_FLAG) $(COMP_FLAG) $*.c
 clean:
-	rm -f $(OBJS) $(EXEC
+	rm -f $(OBJS) $(EXEC)
