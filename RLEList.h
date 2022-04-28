@@ -167,3 +167,4 @@ int RLEListRepetitions(RLEList list, int index, RLEListResult *result);
 
 
 #endif //MTM_HW1_RLELIST_H
+
