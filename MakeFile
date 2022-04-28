@@ -1,16 +1,19 @@
 CC = gcc
-OBJS = AsciiArtTool.o RLEList.o fixBug.o
-EXEC = mtm_hw1
-DEBUG_FLAG = # now empty, assign -g for debug
-COMP_FLAG = -std=c99 -Wall -Werror
+MAIN = tool/main
+ASCII_ART_TOOL = tool/AsciiArtTool
+OBJS = $(ASCII_ART_TOOL).o $(MAIN).o RLEList.o
+EXEC = AsciiArtTool
+DEBUG_FLAG = -g
+RLE_TOTAL_HEADER = tool/RLEListTotalIncluder
+CFLAGS = $(DEBUG_FLAG) -std=c99 -Wall -Werror -I/home/mtm/public/2122b/ex1 -Itool
 
 $(EXEC) : $(OBJS)
 	$(CC) $(DEBUG_FLAG) $(OBJS) -o $@
-AsciiArtTool.o : AsciiArtTool.c AsciiArtTool.h RLEList.h
-	$(CC) -c $(DEBUG_FLAG) $(COMP_FLAG) $*.c
-RLEList.o : RLEList.c RLEList.h
-	$(CC) -c $(DEBUG_FLAG) $(COMP_FLAG) $*.c
-fixBug.o : fixBug.c fixBug.h
-	$(CC) -c $(DEBUG_FLAG) $(COMP_FLAG) $*.c
+AsciiArtTool.o : $(ASCII_ART_TOOL).c $(ASCII_ART_TOOL).h $(RLE_TOTAL_HEADER).h
+
+RLEList.o : RLEList.c $(RLE_TOTAL_HEADER).h
+
+main.o : $(MAIN).c $(ASCII_ART_TOOL).h
+
 clean:
 	rm -f $(OBJS) $(EXEC)
